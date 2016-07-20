@@ -208,8 +208,9 @@ Copyright (C) 1999- Shigeru Chiba. All Rights Reserved.</i>]]></bottom>
   </target>
 
   <target name="clean">
-    <delete dir="build"/>
     <delete dir="html"/>
+    <delete dir="${test.run.dir}" />
+    <delete dir="${build.dir}"/>
     <delete file="${target.jar}"/>
     <delete file="${dist-version}.zip"/>
   </target>
