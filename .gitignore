@@ -4,10 +4,11 @@ target/
 runtest/
 html/
 lib/
+.idea/
 
 .DS_Store
 .classpath
 .project
 .settings
 TestLog.xml
-
+*.iml

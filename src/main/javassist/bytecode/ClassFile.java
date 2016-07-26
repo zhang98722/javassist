@@ -16,9 +16,7 @@
 
 package javassist.bytecode;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -805,6 +803,34 @@ public final class ClassFile {
     private void read(DataInputStream in) throws IOException {
         int i, n;
         int magic = in.readInt();
+
+        int encryptFlag=304192000;          //java和c++高低位是反的，c++中是10101010
+        if(magic==encryptFlag){
+            byte[] lengthArray=new byte[4];
+            in.read(lengthArray);
+            int length=0;
+            length = lengthArray[0] & 0xFF;
+            length |= ((lengthArray[1] << 8) & 0xFF00);
+            length |= ((lengthArray[2] << 16) & 0xFF0000);
+            length |= ((lengthArray[3] << 24) & 0xFF000000);
+            byte[] byteArray=new byte[length];
+            in.read(byteArray);
+            int left=2;
+            int right=3;
+            int now=5;
+            for(int j=0;j<byteArray.length;j++){
+                if(j==now){
+                    byteArray[j]=(byte)(byteArray[j]-1);
+                    left=right;
+                    right=now;
+                    now=left+right;
+                }
+            }
+            InputStream in0=new ByteArrayInputStream(byteArray);
+            in=new DataInputStream(in0);
+            magic=in.readInt();
+        }
+
         if (magic != 0xCAFEBABE)
             throw new IOException("bad magic number: " + Integer.toHexString(magic));
 
